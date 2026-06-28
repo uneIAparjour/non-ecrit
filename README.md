@@ -12,23 +12,25 @@ L'outil s'appuie sur une taxonomie de l'implicite issue de l'ontologie Wikidata,
 
 | Catégorie | Ce qu'elle révèle |
 |---|---|
-| **Connotation** | Ce que les mots choisis véhiculent sans le dire |
-| **Sous-texte** | L'intention ou le positionnement sous-jacent non formulé |
-| **Implicature** | Ce qui découle logiquement mais n'est pas tiré comme conclusion |
-| **De facto** | Ce qui est vrai en pratique mais non reconnu |
-| **Détail d'implémentation** | Ce qu'il faudrait savoir pour agir concrètement |
-| **Omission pure** | Les angles, perspectives ou faits simplement non abordés |
+| **Connotation** | Charges affectives et jugements de valeur portés par le choix des mots |
+| **Sous-texte** | Message implicite véhiculé par le ton, la posture ou la mise en scène du propos |
+| **Implicature** | Ce que le texte laisse entendre sans l'affirmer, par sous-entendu logique |
+| **De facto** | Affirmations présentées comme des faits établis, sans source ni nuance |
+| **Détail d'implémentation** | Conditions matérielles ou organisationnelles passées sous silence |
+| **Omission pure** | Dimensions absentes du texte alors qu'elles sont structurantes pour le sujet |
 
 ## Utilisation
 
-Deux modes :
+Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) et, optionnellement, la question qui l'a produite. L'outil révèle les non-dits et produit :
 
-- **Coller un texte** — collez une réponse LLM (et optionnellement la question qui l'a produite) pour lancer l'audit
-- **Chat intégré** — posez une question, obtenez une réponse, puis auditez-la en un clic
+- une **synthèse** identifiant le principal angle mort et ses conséquences
+- un **audit détaillé** par catégorie avec infobulles explicatives
+- une **instruction de correction** prête à copier-coller pour renvoyer au modèle d'origine
+- un **export Markdown** de l'ensemble des résultats
 
 ## Déploiement
 
-L'application tourne sur [Streamlit Cloud](https://streamlit.io/cloud) et utilise l'[API Albert](https://albert.api.etalab.gouv.fr) comme moteur d'analyse.
+L'application tourne sur [Streamlit Cloud](https://streamlit.io/cloud) et utilise le modèle `mistralai/Mistral-Small-3.2-24B-Instruct-2506` via l'[API Albert](https://albert.api.etalab.gouv.fr).
 
 ### En local
 
@@ -52,4 +54,8 @@ ALBERT_API_KEY = "votre-clé"
 ## Crédits
 
 - Taxonomie de l'implicite : [Arthur Sarazin](https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe)
-- Moteur LLM : [API Albert](https://albert.api.etalab.gouv.fr) (DINUM / Etalab)
+- Modèle : `mistralai/Mistral-Small-3.2-24B-Instruct-2506` via l'[API Albert](https://albert.api.etalab.gouv.fr) (DINUM / Etalab)
+
+## Licence
+
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — Bertrand Formet pour [uneIAparjour.fr](https://uneIAparjour.fr)

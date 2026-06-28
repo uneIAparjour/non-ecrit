@@ -218,6 +218,7 @@ st.markdown("""
   font-size: 12px; font-weight: 700; letter-spacing: 1px;
   text-transform: uppercase; color: #10B981; margin-bottom: 12px;
 }
+.vnt-instr-wrap { position: relative; }
 .vnt-instr-pre {
   margin: 0; background: #15191c; border: 1px solid #3a3f44;
   border-radius: 8px; padding: 18px;
@@ -225,6 +226,15 @@ st.markdown("""
   font-size: 13.5px; line-height: 1.65; color: #c2c3c8;
   white-space: pre-wrap; overflow-x: auto;
 }
+.vnt-copy-btn {
+  position: absolute; top: 12px; right: 12px;
+  background: #2a2f33; color: #c2c3c8;
+  border: 1px solid #3a3f44; border-radius: 6px;
+  padding: 6px 12px; font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: 'Spline Sans', sans-serif;
+  transition: border-color .15s ease, color .15s ease;
+}
+.vnt-copy-btn:hover { border-color: #10B981; color: #10B981; }
 
 /* Footer */
 .vnt-footer {
@@ -381,10 +391,19 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
 
     # Instruction block
     if audit.get("correction_prompt"):
+        escaped = audit["correction_prompt"].replace("`", "\\`").replace("$", "\\$")
         st.markdown(
             '<div class="vnt-instr">'
             '<div class="vnt-instr-label">Instruction à renvoyer au modèle d\'origine</div>'
-            f'<pre class="vnt-instr-pre">{audit["correction_prompt"]}</pre>'
+            '<div class="vnt-instr-wrap">'
+            f'<pre class="vnt-instr-pre" id="vnt-instruction">{audit["correction_prompt"]}</pre>'
+            '<button class="vnt-copy-btn" onclick="'
+            "var t=document.getElementById('vnt-instruction').textContent;"
+            "navigator.clipboard.writeText(t).then(function(){"
+            "var b=event.target;b.textContent='Copié ✓';"
+            "setTimeout(function(){b.textContent='Copier'},1800)});"
+            '">Copier</button>'
+            '</div>'
             '</div>',
             unsafe_allow_html=True,
         )

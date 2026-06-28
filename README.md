@@ -4,7 +4,7 @@ Audit des implicites, sous-textes et angles morts dans une réponse de modèle d
 
 ## Le problème
 
-La réponse d'un LLM, aussi vraisemblable soit-elle, comporte des manques : des implicites que le modèle tient pour acquis, des conclusions logiques qu'il ne tire pas, des angles qu'il n'aborde pas. Ces non-dits sont invisibles pour l'utilisateur et c'est précisément ce que la délégation à la machine rend jsutement visible.
+La réponse d'un LLM, aussi vraisemblable soit-elle, comporte des manques : des implicites que le modèle tient pour acquis, des conclusions logiques qu'il ne tire pas, des angles qu'il n'aborde pas. Ces non-dits sont invisibles pour l'utilisateur et c'est précisément ce que la délégation à la machine rend justement visible.
 
 ## L'approche
 

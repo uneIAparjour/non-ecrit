@@ -79,13 +79,14 @@ Tu structures ton analyse selon 6 catégories issues de l'ontologie Wikidata de 
 INSTRUCTIONS :
 - Pour chaque catégorie, liste les éléments trouvés. Si une catégorie est vide, renvoie un tableau vide [].
 - Sois précis et actionnable : cite les passages concernés quand pertinent.
+- IMPORTANT : utilise les guillemets français « » pour les citations, jamais les guillemets simples ' ' ni doubles " ".
 
 Pour la SYNTHÈSE, rédige un paragraphe structuré (4 à 6 phrases) qui :
 - Identifie le principal angle mort de la réponse
 - Explique pourquoi cet angle mort est problématique pour le lecteur
 - Indique ce que le lecteur risque de croire, décider ou faire à tort s'il ne perçoit pas ces implicites
 - Évalue le niveau de fiabilité apparente vs. réelle de la réponse
-- Termine en indiquant le nombre total de non-dits identifiés
+- Ne mentionne PAS de nombre total de non-dits (le décompte est calculé automatiquement par l'application)
 
 Pour l'INSTRUCTION DE CORRECTION, rédige une consigne précise et directement utilisable que l'utilisateur pourra copier-coller et envoyer au modèle d'origine pour lui demander de compléter sa réponse. Cette consigne doit :
 - Lister les points spécifiques à expliciter
@@ -141,7 +142,7 @@ st.markdown("""
 }
 .vnt-synth-text {
   font-family: 'Spline Sans', sans-serif;
-  font-size: 15px; line-height: 1.6; color: #fefefe; margin: 0;
+  font-size: 16.5px; line-height: 1.65; color: #fefefe; margin: 0;
 }
 
 /* Section heading */
@@ -173,7 +174,7 @@ st.markdown("""
 }
 .vnt-card-title {
   font-family: 'Spline Sans', sans-serif;
-  font-size: 16px; font-weight: 700; color: #fefefe;
+  font-size: 17px; font-weight: 700; color: #fefefe;
 }
 .vnt-card-pill {
   margin-left: auto; padding: 3px 10px; border-radius: 20px;
@@ -186,7 +187,7 @@ st.markdown("""
 }
 .vnt-card-items li {
   font-family: 'Spline Sans', sans-serif;
-  font-size: 14.5px; line-height: 1.55; color: #c2c3c8;
+  font-size: 16px; line-height: 1.6; color: #c2c3c8;
   padding-left: 16px; position: relative;
 }
 
@@ -221,19 +222,19 @@ st.markdown("""
   font-size: 12px; font-weight: 700; letter-spacing: 1px;
   text-transform: uppercase; color: #10B981; margin-bottom: 12px;
 }
-.vnt-instr-wrap { position: relative; }
+.vnt-instr-wrap { display: flex; flex-direction: column; gap: 10px; }
 .vnt-instr-pre {
   margin: 0; background: #15191c; border: 1px solid #3a3f44;
   border-radius: 8px; padding: 18px;
-  font-family: 'SF Mono', Menlo, Consolas, monospace;
-  font-size: 13.5px; line-height: 1.65; color: #c2c3c8;
+  font-family: 'Spline Sans', sans-serif;
+  font-size: 15px; line-height: 1.65; color: #c2c3c8;
   white-space: pre-wrap; overflow-x: auto;
 }
 .vnt-copy-btn {
-  position: absolute; top: 12px; right: 12px;
+  align-self: flex-end;
   background: #2a2f33; color: #c2c3c8;
   border: 1px solid #3a3f44; border-radius: 6px;
-  padding: 6px 12px; font-size: 12px; font-weight: 600;
+  padding: 8px 16px; font-size: 13px; font-weight: 600;
   cursor: pointer; font-family: 'Spline Sans', sans-serif;
   transition: border-color .15s ease, color .15s ease;
 }

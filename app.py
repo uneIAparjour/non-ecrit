@@ -115,15 +115,16 @@ st.markdown("""
 /* Header */
 .vnt-title {
   font-family: 'Instrument Serif', Georgia, serif;
-  font-weight: 400; font-size: 64px; line-height: 1.02;
-  letter-spacing: -0.5px; margin: 0 0 18px;
+  font-weight: 400; font-size: 72px; line-height: 1.05;
+  letter-spacing: -0.5px; margin: 0 0 28px;
 }
 .vnt-title .l1 { color: #fefefe; }
 .vnt-title .l2 { font-style: italic; color: #E67E22; }
 .vnt-subtitle {
-  margin: 0 0 40px; max-width: 600px;
+  margin: 0 0 48px; max-width: 640px;
   font-family: 'Spline Sans', sans-serif;
-  font-size: 17px; line-height: 1.55; color: #c2c3c8;
+  font-size: 19px; line-height: 1.55; color: #c2c3c8;
+  font-style: italic;
 }
 
 /* Synthesis callout */
@@ -256,7 +257,7 @@ st.markdown("""
 # ---------------------------------------------------------------------------
 
 st.markdown(
-    '<h1 class="vnt-title"><span class="l1">Voyage au pays</span><br>'
+    '<h1 class="vnt-title"><span class="l1">Voyage au pays </span>'
     '<span class="l2">du non-écrit</span></h1>',
     unsafe_allow_html=True,
 )
@@ -267,8 +268,10 @@ st.markdown(
 )
 
 st.markdown(
+    '<p style="margin-bottom: 40px;">'
     "Vous avez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) ? "
-    "Collez-la ci-dessous pour en révéler les non-dits."
+    "Collez-la ci-dessous pour en révéler les non-dits.</p>",
+    unsafe_allow_html=True,
 )
 
 # ---------------------------------------------------------------------------

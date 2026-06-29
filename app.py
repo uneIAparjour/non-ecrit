@@ -3,8 +3,10 @@
 Streamlit app propulsée par l'API Albert.
 """
 
+import html
 import json
 import re
+import time
 
 import httpx
 import streamlit as st
@@ -287,6 +289,9 @@ def call_albert(messages: list[dict]) -> str:
     return resp.json()["choices"][0]["message"]["content"]
 
 
+EXPECTED_KEYS = {"connotation", "subtext", "implicature", "defacto", "implementation", "omission"}
+
+
 def run_audit(question: str, answer: str) -> dict:
     user_content = (
         f"QUESTION : {question}\n\nRÉPONSE DU LLM :\n{answer}"
@@ -302,7 +307,20 @@ def run_audit(question: str, answer: str) -> dict:
     match = re.search(r"```(?:json)?\s*([\s\S]*?)```", raw)
     if match:
         json_str = match.group(1)
-    return json.loads(json_str.strip())
+    try:
+        data = json.loads(json_str.strip())
+    except json.JSONDecodeError:
+        raise ValueError(
+            "Le modèle n'a pas renvoyé un JSON valide. Réessayez."
+        )
+    for key in EXPECTED_KEYS:
+        if key not in data:
+            data[key] = []
+    if "synthesis" not in data:
+        data["synthesis"] = ""
+    if "correction_prompt" not in data:
+        data["correction_prompt"] = ""
+    return data
 
 
 def format_export(audit: dict, question: str, answer: str) -> str:
@@ -340,13 +358,17 @@ def _hex_to_rgba(hex_color: str, alpha: float) -> str:
     return f"rgba({r},{g},{b},{alpha})"
 
 
+def _esc(text: str) -> str:
+    return html.escape(str(text))
+
+
 def render_results(audit: dict, question: str = "", answer: str = ""):
     # Synthesis
     if audit.get("synthesis"):
         st.markdown(
             '<div class="vnt-synth">'
             '<div class="vnt-synth-label">Synthèse de l\'audit</div>'
-            f'<p class="vnt-synth-text">{audit["synthesis"]}</p>'
+            f'<p class="vnt-synth-text">{_esc(audit["synthesis"])}</p>'
             '</div>',
             unsafe_allow_html=True,
         )
@@ -370,7 +392,7 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
         items_html = ""
         if items:
             lis = "".join(
-                f'<li><span style="position:absolute;left:0;top:0;color:{color};">•</span>{item}</li>'
+                f'<li><span style="position:absolute;left:0;top:0;color:{color};">•</span>{_esc(item)}</li>'
                 for item in items
             )
             items_html = f'<ul class="vnt-card-items">{lis}</ul>'
@@ -391,12 +413,12 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
 
     # Instruction block
     if audit.get("correction_prompt"):
-        escaped = audit["correction_prompt"].replace("`", "\\`").replace("$", "\\$")
+        safe_prompt = _esc(audit["correction_prompt"])
         st.markdown(
             '<div class="vnt-instr">'
             '<div class="vnt-instr-label">Instruction à renvoyer au modèle d\'origine</div>'
             '<div class="vnt-instr-wrap">'
-            f'<pre class="vnt-instr-pre" id="vnt-instruction">{audit["correction_prompt"]}</pre>'
+            f'<pre class="vnt-instr-pre" id="vnt-instruction">{safe_prompt}</pre>'
             '<button class="vnt-copy-btn" onclick="'
             "var t=document.getElementById('vnt-instruction').textContent;"
             "navigator.clipboard.writeText(t).then(function(){"
@@ -422,6 +444,8 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
 # Form
 # ---------------------------------------------------------------------------
 
+RATE_LIMIT_SECONDS = 15
+
 question = st.text_area(
     "Contexte / question posée — *optionnel*",
     placeholder="La question initiale ou le contexte dans lequel la réponse a été produite...",
@@ -436,14 +460,32 @@ if st.button("Révéler le non-écrit →", type="primary", use_container_width=
     if not answer.strip():
         st.warning("Veuillez coller la réponse à auditer.")
     else:
-        with st.spinner("Analyse des implicites en cours…"):
-            try:
-                q = question.strip()
-                a = answer.strip()
-                audit = run_audit(q, a)
-                render_results(audit, q, a)
-            except Exception as e:
-                st.error(f"Erreur : {e}")
+        last_call = st.session_state.get("last_call_time", 0)
+        if time.time() - last_call < RATE_LIMIT_SECONDS:
+            st.warning(f"Veuillez patienter {RATE_LIMIT_SECONDS} secondes entre deux analyses.")
+        else:
+            with st.spinner("Analyse des implicites en cours…"):
+                try:
+                    q = question.strip()
+                    a = answer.strip()
+                    audit = run_audit(q, a)
+                    st.session_state["last_call_time"] = time.time()
+                    st.session_state["audit_result"] = audit
+                    st.session_state["audit_question"] = q
+                    st.session_state["audit_answer"] = a
+                except (ValueError, json.JSONDecodeError) as e:
+                    st.error(f"Erreur d'analyse : {e}")
+                except httpx.HTTPStatusError:
+                    st.error("Erreur de communication avec l'API Albert. Réessayez dans quelques instants.")
+                except Exception:
+                    st.error("Une erreur inattendue s'est produite. Réessayez.")
+
+if st.session_state.get("audit_result"):
+    render_results(
+        st.session_state["audit_result"],
+        st.session_state.get("audit_question", ""),
+        st.session_state.get("audit_answer", ""),
+    )
 
 # ---------------------------------------------------------------------------
 # Footer

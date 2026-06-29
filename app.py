@@ -263,7 +263,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.markdown(
-    '<p class="vnt-subtitle">Audit des implicites, sous-textes et angles morts des réponses proposées par un LLM.</p>',
+    '<p class="vnt-subtitle">Audit des implicites, sous-textes et angles morts '
+    'des réponses proposées par un LLM.</p>',
     unsafe_allow_html=True,
 )
 

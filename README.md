@@ -1,6 +1,6 @@
 # Voyage au pays du non-écrit
 
-Audit des implicites, sous-textes et angles morts dans une réponse de modèle de langage.
+Audit des implicites, sous-textes et angles morts des réponses proposées par un LLM.
 
 ## Le problème
 

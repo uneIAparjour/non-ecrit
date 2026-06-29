@@ -270,8 +270,7 @@ st.markdown(
 
 st.markdown(
     '<p style="margin-bottom: 40px;">'
-    "Vous avez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) ? "
-    "Collez-la ci-dessous pour en révéler les non-dits.</p>",
+    "Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) pour en révéler les non-dits.</p>",
     unsafe_allow_html=True,
 )
 

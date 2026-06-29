@@ -454,8 +454,8 @@ st.markdown(
     '<div>Inspiré par <a href="https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe" '
     'target="_blank">Voyage au pays du non-écrit</a> d\'<span class="name">Arthur Sarazin</span>'
     f'</div><div>Modèle <span class="name">{LLM_MODEL}</span> via l\'<a href="https://albert.api.etalab.gouv.fr" '
-    'target="_blank">API Albert</a>'
-    ' · <a href="https://github.com/uneIAparjour/non-ecrit" target="_blank">GitHub</a></div>'
+    'target="_blank">API Albert</a></div>
+    '<div>Développé avec Claude Code, <a href="https://github.com/uneIAparjour/non-ecrit" target="_blank">dépôt GitHub</a></div>'
     '<div style="margin-top:8px;">CC BY 4.0 — <span class="name">Bertrand Formet</span> pour '
     '<a href="https://uneIAparjour.fr" target="_blank">uneIAparjour.fr</a></div>'
     '</div>',

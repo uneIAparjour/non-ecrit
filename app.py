@@ -623,7 +623,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-with st.expander("Mentions légales & confidentialité"):
+with st.expander("Confidentialité"):
     st.markdown(
         f"""
 **Traitement des données**

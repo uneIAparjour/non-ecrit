@@ -34,7 +34,7 @@ Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini,
 
 ## Déploiement
 
-L'application est hébergée sur [Render](https://render.com), région **Frankfurt (UE)**, et utilise le modèle `openai/gpt-oss-120b` via l'[API Albert](https://albert.api.etalab.gouv.fr) — l'ensemble de la chaîne (hébergement + inférence) reste ainsi en Union européenne.
+L'application est hébergée sur [Render](https://render.com), région **Frankfurt (UE)**, et utilise le modèle `openai/gpt-oss-120b` via l'[API Albert](https://ia.numerique.gouv.fr/outils-ia/albert-api/) — l'ensemble de la chaîne (hébergement + inférence) reste ainsi en Union européenne.
 
 ### En local
 
@@ -85,7 +85,7 @@ window.addEventListener('message', function (e) {
 ## Crédits
 
 - Taxonomie de l'implicite : [Arthur Sarazin](https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe)
-- Modèle : `openai/gpt-oss-120b` via l'[API Albert](https://albert.api.etalab.gouv.fr) (DINUM / Etalab)
+- Modèle : `openai/gpt-oss-120b` via l'[API Albert](https://ia.numerique.gouv.fr/outils-ia/albert-api/) (DINUM / Etalab)
 
 ## Licence
 

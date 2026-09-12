@@ -15,7 +15,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 if "lang" not in st.session_state:
-    st.session_state["lang"] = "fr"
+    st.session_state["lang"] = "en" if st.query_params.get("lang") == "en" else "fr"
 LANG = st.session_state["lang"]
 
 st.set_page_config(

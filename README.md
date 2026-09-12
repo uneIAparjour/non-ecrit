@@ -30,7 +30,7 @@ Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini,
 
 ## Déploiement
 
-L'application tourne sur [Streamlit Cloud](https://streamlit.io/cloud) et utilise le modèle `mistralai/Mistral-Small-3.2-24B-Instruct-2506` via l'[API Albert](https://albert.api.etalab.gouv.fr).
+L'application est hébergée sur [Render](https://render.com), région **Frankfurt (UE)**, et utilise le modèle `mistralai/Mistral-Small-3.2-24B-Instruct-2506` via l'[API Albert](https://albert.api.etalab.gouv.fr) — l'ensemble de la chaîne (hébergement + inférence) reste ainsi en Union européenne.
 
 ### En local
 
@@ -41,15 +41,28 @@ cp .streamlit/secrets.toml.example .streamlit/secrets.toml
 streamlit run app.py
 ```
 
-### Sur Streamlit Cloud
+### Sur Render (région Frankfurt)
 
-1. Connecter le repo GitHub
+Le dépôt contient un [`render.yaml`](render.yaml) (Blueprint) qui préconfigure le service en région `frankfurt`.
+
+1. Sur [render.com](https://dashboard.render.com/blueprints), **New → Blueprint**, sélectionner ce dépôt GitHub.
+2. Render détecte `render.yaml` et propose un service web `non-ecrit` déjà réglé sur Frankfurt.
+3. Renseigner la variable d'environnement `ALBERT_API_KEY` (marquée `sync: false`, donc à saisir manuellement dans le dashboard Render — jamais commitée).
+4. Déployer. Render construit avec `pip install -r requirements.txt` et lance `streamlit run app.py --server.port $PORT`.
+
+Sans Blueprint, un service web Python classique fonctionne aussi : même build/start command que ci-dessus, région à choisir manuellement (Frankfurt), et les mêmes variables d'environnement à définir dans **Environment**.
+
+### Sur Streamlit Cloud (alternatif)
+
+1. Connecter le repo GitHub sur [streamlit.io/cloud](https://streamlit.io/cloud)
 2. Pointer sur `app.py`
 3. Dans **Settings → Secrets**, ajouter :
 
 ```toml
 ALBERT_API_KEY = "votre-clé"
 ```
+
+Streamlit Cloud n'offre pas de choix de région UE explicite — à privilégier pour un déploiement rapide, Render pour la garantie d'hébergement européen.
 
 ## Crédits
 

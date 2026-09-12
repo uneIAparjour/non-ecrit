@@ -5,6 +5,7 @@ Streamlit app propulsée par l'API Albert.
 
 import html
 import json
+import os
 import re
 import time
 
@@ -21,9 +22,21 @@ st.set_page_config(
 # Config
 # ---------------------------------------------------------------------------
 
-ALBERT_API_KEY = st.secrets.get("ALBERT_API_KEY", "")
-ALBERT_BASE_URL = st.secrets.get("ALBERT_BASE_URL", "https://albert.api.etalab.gouv.fr/v1")
-LLM_MODEL = st.secrets.get("LLM_MODEL", "mistralai/Mistral-Small-3.2-24B-Instruct-2506")
+
+def _config(key: str, default: str = "") -> str:
+    """Read config from Streamlit secrets (Streamlit Cloud) or the environment
+    (Render and other hosts without a secrets.toml file)."""
+    try:
+        if key in st.secrets:
+            return st.secrets[key]
+    except Exception:
+        pass
+    return os.environ.get(key, default)
+
+
+ALBERT_API_KEY = _config("ALBERT_API_KEY")
+ALBERT_BASE_URL = _config("ALBERT_BASE_URL", "https://albert.api.etalab.gouv.fr/v1")
+LLM_MODEL = _config("LLM_MODEL", "mistralai/Mistral-Small-3.2-24B-Instruct-2506")
 
 if "theme" not in st.session_state:
     st.session_state["theme"] = "dark"
@@ -619,7 +632,8 @@ Le texte que vous collez (réponse à auditer, question de contexte) est transmi
 conservé ni par cette application ni dans une base de données : aucun stockage persistant côté
 serveur, seule la mémoire de session de votre navigateur garde le dernier résultat, et elle est
 effacée à la fermeture de l'onglet. L'application ne dépose aucun cookie de suivi et ne collecte
-aucune donnée personnelle.
+aucune donnée personnelle. L'application elle-même est hébergée dans l'Union européenne
+(Francfort, Allemagne), en complément de l'infrastructure souveraine d'Albert.
 
 **Contenu généré par IA**
 La synthèse, les catégories de non-dits et l'instruction de correction affichées sont produites

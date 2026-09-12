@@ -30,7 +30,7 @@ Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini,
 
 ## Déploiement
 
-L'application est hébergée sur [Render](https://render.com), région **Frankfurt (UE)**, et utilise le modèle `mistralai/Mistral-Small-3.2-24B-Instruct-2506` via l'[API Albert](https://albert.api.etalab.gouv.fr) — l'ensemble de la chaîne (hébergement + inférence) reste ainsi en Union européenne.
+L'application est hébergée sur [Render](https://render.com), région **Frankfurt (UE)**, et utilise le modèle `openai/gpt-oss-120b` via l'[API Albert](https://albert.api.etalab.gouv.fr) — l'ensemble de la chaîne (hébergement + inférence) reste ainsi en Union européenne.
 
 ### En local
 
@@ -69,7 +69,7 @@ Streamlit Cloud n'offre pas de choix de région UE explicite — à privilégier
 ## Crédits
 
 - Taxonomie de l'implicite : [Arthur Sarazin](https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe)
-- Modèle : `mistralai/Mistral-Small-3.2-24B-Instruct-2506` via l'[API Albert](https://albert.api.etalab.gouv.fr) (DINUM / Etalab)
+- Modèle : `openai/gpt-oss-120b` via l'[API Albert](https://albert.api.etalab.gouv.fr) (DINUM / Etalab)
 
 ## Licence
 

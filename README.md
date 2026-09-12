@@ -4,7 +4,7 @@ Audit des implicites, sous-textes et angles morts des réponses proposées par u
 
 ## Le problème
 
-La réponse d'un LLM, aussi vraisemblable soit-elle, comporte des manques : des implicites que le modèle tient pour acquis, des conclusions logiques qu'il ne tire pas, des angles qu'il n'aborde pas. Ces non-dits sont invisibles pour l'utilisateur et c'est précisément ce que la délégation à la machine rend justement visible.
+La réponse d'un LLM, aussi convaincante soit-elle, comporte des manques : des présupposés non formulés, des enchaînements logiques laissés implicites, des aspects du sujet non abordés. Rien dans le texte ne le signale : c'est tout le risque de la délégation à une machine : on ne voit que ce qui est écrit, jamais ce qui ne l'est pas.
 
 ## L'approche
 

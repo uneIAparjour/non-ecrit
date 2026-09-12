@@ -12,6 +12,7 @@ from pathlib import Path
 
 import httpx
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="Voyage au pays du non-écrit",
@@ -639,3 +640,36 @@ généré artificiellement et reste une analyse automatisée, pas une vérité a
 Une question sur le traitement de vos données ? [contact@uneiaparjour.fr](mailto:contact@uneiaparjour.fr)
 """.strip()
     )
+
+# ---------------------------------------------------------------------------
+# Auto-resize when embedded in an iframe (posts our real height to the
+# parent page — see README for the matching listener script to add there).
+# ---------------------------------------------------------------------------
+
+components.html(
+    """
+    <script>
+    (function () {
+      function contentEl() {
+        var doc = window.parent.document;
+        return doc.querySelector('[data-testid="stMainBlockContainer"]')
+          || doc.querySelector('[data-testid="stMain"]')
+          || doc.documentElement;
+      }
+      function reportHeight() {
+        try {
+          var h = contentEl().scrollHeight + 32;
+          window.top.postMessage({ type: "iframeResize", height: h }, "*");
+        } catch (e) {}
+      }
+      reportHeight();
+      window.addEventListener("load", reportHeight);
+      try {
+        new ResizeObserver(reportHeight).observe(contentEl());
+      } catch (e) {}
+      setInterval(reportHeight, 500);
+    })();
+    </script>
+    """,
+    height=0,
+)

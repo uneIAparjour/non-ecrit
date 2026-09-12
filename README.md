@@ -56,6 +56,30 @@ Sans Blueprint, un service web Python classique fonctionne aussi : même build/s
 
 Limites du plan gratuit Render à connaître : le service se met en veille après 15 min sans trafic (le réveil prend ~1 min à la requête suivante), et le workspace dispose de 750h d'instance gratuite par mois — largement suffisant pour un usage occasionnel comme celui-ci.
 
+### Intégration en iframe (ex. sur uneiaparjour.fr)
+
+L'app se poste `postMessage({type: "iframeResize", height})` en continu à la fenêtre parente pour permettre à une page hôte d'ajuster automatiquement la hauteur de son iframe (pas d'ascenseur interne, l'app s'affiche en entier à toutes les étapes). Sur la page hôte, ajouter :
+
+```html
+<iframe
+  id="non-ecrit-iframe"
+  src="https://non-ecrit.onrender.com/"
+  title="Voyage au pays du non-écrit — audit sémantique des réponses LLM"
+  width="100%"
+  frameborder="0"
+  style="border:none; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.1); min-height:900px;">
+</iframe>
+<script>
+window.addEventListener('message', function (e) {
+  var iframe = document.getElementById('non-ecrit-iframe');
+  if (!iframe) return;
+  if (e.data && e.data.type === 'iframeResize') {
+    iframe.style.height = e.data.height + 'px';
+  }
+});
+</script>
+```
+
 ## Crédits
 
 - Taxonomie de l'implicite : [Arthur Sarazin](https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe)

@@ -50,7 +50,9 @@ Le dépôt contient un [`render.yaml`](render.yaml) (Blueprint) qui préconfigur
 3. Renseigner la variable d'environnement `ALBERT_API_KEY` (marquée `sync: false`, donc à saisir manuellement dans le dashboard Render — jamais commitée).
 4. Déployer. Render construit avec `pip install -r requirements.txt` et lance `streamlit run app.py --server.port $PORT`.
 
-Sans Blueprint, un service web Python classique fonctionne aussi : même build/start command que ci-dessus, région à choisir manuellement (Frankfurt), et les mêmes variables d'environnement à définir dans **Environment**.
+Sans Blueprint, un service web Python classique fonctionne aussi : même build/start command que ci-dessus, région à choisir manuellement (Frankfurt), plan **Free** (pas besoin de carte tant que les quotas gratuits suffisent), et les mêmes variables d'environnement à définir dans **Environment**.
+
+Limites du plan gratuit Render à connaître : le service se met en veille après 15 min sans trafic (le réveil prend ~1 min à la requête suivante), et le workspace dispose de 750h d'instance gratuite par mois — largement suffisant pour un usage occasionnel comme celui-ci.
 
 ### Sur Streamlit Cloud (alternatif)
 

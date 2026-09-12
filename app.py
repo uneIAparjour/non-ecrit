@@ -189,15 +189,15 @@ st.markdown(f"""
   font-style: italic;
 }}
 
-/* Theme toggle */
+/* Theme toggle — anchored to the content column, level with the title */
+[data-testid="stMainBlockContainer"] {{ position: relative; }}
+.st-key-theme_toggle {{ position: absolute; top: 122px; right: 0; z-index: 10; }}
 .st-key-theme_toggle button {{
-  position: fixed; top: 78px; right: 28px; z-index: 1000;
   width: auto; height: auto; padding: 4px; min-height: 0;
   background: transparent !important; border: none !important; box-shadow: none !important;
   color: var(--vnt-text-muted) !important; display: flex; align-items: center; justify-content: center;
   opacity: 0.75; transition: color .15s ease, opacity .15s ease;
 }}
-.st-key-theme_toggle button p {{ font-size: 15px; margin: 0; line-height: 1; }}
 .st-key-theme_toggle button:hover {{ color: var(--vnt-accent) !important; opacity: 1; }}
 
 /* Synthesis callout */
@@ -364,8 +364,8 @@ st.markdown(f"""
 # Theme toggle — sun / moon pictogram, fixed top-right
 # ---------------------------------------------------------------------------
 
-_toggle_icon = "🌙" if THEME == "dark" else "☀️"
-if st.button(_toggle_icon, key="theme_toggle", help="Basculer entre thème clair et sombre"):
+_toggle_icon = ":material/dark_mode:" if THEME == "dark" else ":material/light_mode:"
+if st.button("", key="theme_toggle", help="Basculer entre thème clair et sombre", icon=_toggle_icon):
     st.session_state["theme"] = "light" if THEME == "dark" else "dark"
     st.rerun()
 
@@ -481,6 +481,20 @@ def _esc(text: str) -> str:
     return html.escape(str(text))
 
 
+@st.dialog("Nouvel audit")
+def _confirm_new_audit():
+    st.write("⚠️ Attention, l'audit actuel sera effacé. Continuer ?")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Annuler", use_container_width=True):
+            st.rerun()
+    with col2:
+        if st.button("Effacer et continuer", type="primary", use_container_width=True):
+            for key in ("audit_result", "audit_question", "audit_answer"):
+                st.session_state.pop(key, None)
+            st.rerun()
+
+
 def render_results(audit: dict, question: str = "", answer: str = ""):
     # Synthesis
     if audit.get("synthesis"):
@@ -559,6 +573,9 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
         use_container_width=True,
     )
 
+    if st.button("↺ Nouvel audit", use_container_width=True, key="new_audit_btn"):
+        _confirm_new_audit()
+
 # ---------------------------------------------------------------------------
 # Form
 # ---------------------------------------------------------------------------
@@ -615,7 +632,8 @@ st.markdown(
     '<div>Inspiré par <a href="https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe" '
     'target="_blank">Voyage au pays du non-écrit</a> d\'<span class="name">Arthur Sarazin</span></div>'
     f'<div>Modèle <span class="name">{LLM_MODEL}</span> via l\'<a href="https://albert.api.etalab.gouv.fr" '
-    'target="_blank">API Albert</a></div>'
+    'target="_blank">API Albert</a> · hébergé sur <a href="https://render.com" target="_blank">Render</a> '
+    '(<span class="name">Francfort, UE</span>)</div>'
     '<div>Développé avec Claude Code · <a href="https://github.com/uneIAparjour/non-ecrit" target="_blank">dépôt GitHub</a></div>'
     '<div style="margin-top:8px;">CC BY 4.0 — <span class="name">Bertrand Formet</span> pour '
     '<a href="https://uneIAparjour.fr" target="_blank">uneIAparjour.fr</a></div>'
@@ -632,20 +650,15 @@ Le texte que vous collez (réponse à auditer, question de contexte) est transmi
 conservé ni par cette application ni dans une base de données : aucun stockage persistant côté
 serveur, seule la mémoire de session de votre navigateur garde le dernier résultat, et elle est
 effacée à la fermeture de l'onglet. L'application ne dépose aucun cookie de suivi et ne collecte
-aucune donnée personnelle. L'application elle-même est hébergée dans l'Union européenne
-(Francfort, Allemagne), en complément de l'infrastructure souveraine d'Albert.
+aucune donnée personnelle.
 
 **Contenu généré par IA**
 La synthèse, les catégories de non-dits et l'instruction de correction affichées sont produites
-par un modèle de langage (actuellement `{LLM_MODEL}` via l'API Albert), conformément à
-l'obligation de transparence du règlement européen sur l'IA (AI Act, art. 50) : ce contenu est
-signalé comme généré artificiellement et reste une analyse automatisée, pas une vérité absolue.
+par le modèle de langage indiqué ci-dessus via l'API Albert, conformément à l'obligation de
+transparence du règlement européen sur l'IA (AI Act, art. 50) : ce contenu est signalé comme
+généré artificiellement et reste une analyse automatisée, pas une vérité absolue.
 
-**Éditeur & contact**
-Bertrand Formet — [uneIAparjour.fr](https://uneiaparjour.fr) — [contact@uneiaparjour.fr](mailto:contact@uneiaparjour.fr)
-
-**Licence**
-Code source sous licence [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.fr) —
-[dépôt GitHub](https://github.com/uneIAparjour/non-ecrit)
+**Contact**
+Une question sur le traitement de vos données ? [contact@uneiaparjour.fr](mailto:contact@uneiaparjour.fr)
 """.strip()
     )

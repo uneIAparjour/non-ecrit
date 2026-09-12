@@ -161,9 +161,13 @@ st.markdown(f"""
   font-size: 13px; color: var(--vnt-text-muted);
 }}
 
+/* Reclaim the space reserved for Streamlit's own (hidden) header bar */
+[data-testid="stHeader"] {{ display: none !important; }}
+[data-testid="stMainBlockContainer"] {{ padding-top: 24px !important; }}
+
 /* Theme toggle — anchored to the content column, level with the title */
 [data-testid="stMainBlockContainer"] {{ position: relative; }}
-.st-key-theme_toggle {{ position: absolute; top: 122px; right: 0; z-index: 10; }}
+.st-key-theme_toggle {{ position: absolute; top: 34px; right: 0; z-index: 10; }}
 .st-key-theme_toggle button {{
   width: auto; height: auto; padding: 4px; min-height: 0;
   background: transparent !important; border: none !important; box-shadow: none !important;

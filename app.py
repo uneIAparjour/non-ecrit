@@ -191,14 +191,14 @@ st.markdown(f"""
 
 /* Theme toggle */
 .st-key-theme_toggle button {{
-  position: fixed; top: 72px; right: 24px; z-index: 1000;
-  width: 42px; height: 42px; padding: 0; border-radius: 50%;
-  background: var(--vnt-bg-elev) !important; border: 1px solid var(--vnt-border) !important;
-  color: var(--vnt-text) !important; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 8px var(--vnt-shadow);
+  position: fixed; top: 78px; right: 28px; z-index: 1000;
+  width: auto; height: auto; padding: 4px; min-height: 0;
+  background: transparent !important; border: none !important; box-shadow: none !important;
+  color: var(--vnt-text-muted) !important; display: flex; align-items: center; justify-content: center;
+  opacity: 0.75; transition: color .15s ease, opacity .15s ease;
 }}
-.st-key-theme_toggle button p {{ font-size: 18px; margin: 0; line-height: 1; }}
-.st-key-theme_toggle button:hover {{ border-color: var(--vnt-accent) !important; color: var(--vnt-accent) !important; }}
+.st-key-theme_toggle button p {{ font-size: 15px; margin: 0; line-height: 1; }}
+.st-key-theme_toggle button:hover {{ color: var(--vnt-accent) !important; opacity: 1; }}
 
 /* Synthesis callout */
 .vnt-synth {{

@@ -358,7 +358,7 @@ st.markdown(
 st.markdown(
     '<p style="margin-bottom: 8px;">'
     "Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) pour en révéler les non-dits.</p>"
-    '<p class="vnt-ai-notice">Analyse générée par un modèle d\'IA — pas une vérité absolue '
+    '<p class="vnt-ai-notice">Analyse générée par un modèle d\'IA, pas une vérité absolue '
     '(détails en pied de page).</p>',
     unsafe_allow_html=True,
 )

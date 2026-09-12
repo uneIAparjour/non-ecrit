@@ -25,6 +25,40 @@ ALBERT_API_KEY = st.secrets.get("ALBERT_API_KEY", "")
 ALBERT_BASE_URL = st.secrets.get("ALBERT_BASE_URL", "https://albert.api.etalab.gouv.fr/v1")
 LLM_MODEL = st.secrets.get("LLM_MODEL", "mistralai/Mistral-Small-3.2-24B-Instruct-2506")
 
+if "theme" not in st.session_state:
+    st.session_state["theme"] = "dark"
+THEME = st.session_state["theme"]
+
+PALETTES = {
+    "dark": {
+        "bg": "#1d2327",
+        "bg-elev": "#2a2f33",
+        "card-bg": "#202023",
+        "code-bg": "#15191c",
+        "border": "#3a3f44",
+        "text": "#fefefe",
+        "text-secondary": "#c2c3c8",
+        "text-muted": "#7a7b80",
+        "accent": "#E67E22",
+        "accent-strong": "#f39c3e",
+        "shadow": "rgba(0,0,0,0.4)",
+    },
+    "light": {
+        "bg": "#faf8f4",
+        "bg-elev": "#f1ede6",
+        "card-bg": "#ffffff",
+        "code-bg": "#f4f1ea",
+        "border": "#e2ddd3",
+        "text": "#22201c",
+        "text-secondary": "#4d4a44",
+        "text-muted": "#8a857c",
+        "accent": "#E67E22",
+        "accent-strong": "#c9670f",
+        "shadow": "rgba(30,20,10,0.08)",
+    },
+}
+PALETTE = PALETTES[THEME]
+
 CATEGORIES = [
     (
         "connotation", "Connotation",
@@ -109,149 +143,218 @@ Réponds UNIQUEMENT en JSON valide avec cette structure exacte :
 # Style — hifi from Claude Design handoff
 # ---------------------------------------------------------------------------
 
-st.markdown("""
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Spline+Sans:wght@400;500;600;700&display=swap');
 
+:root {{
+  --vnt-bg: {PALETTE["bg"]};
+  --vnt-bg-elev: {PALETTE["bg-elev"]};
+  --vnt-card-bg: {PALETTE["card-bg"]};
+  --vnt-code-bg: {PALETTE["code-bg"]};
+  --vnt-border: {PALETTE["border"]};
+  --vnt-text: {PALETTE["text"]};
+  --vnt-text-secondary: {PALETTE["text-secondary"]};
+  --vnt-text-muted: {PALETTE["text-muted"]};
+  --vnt-accent: {PALETTE["accent"]};
+  --vnt-accent-strong: {PALETTE["accent-strong"]};
+  --vnt-shadow: {PALETTE["shadow"]};
+}}
+
 /* Header */
-.vnt-title {
+.vnt-title {{
   font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 400; font-size: 72px; line-height: 1.05;
   letter-spacing: -0.5px; margin: 0 0 28px;
-}
-.vnt-title .l1 { color: #fefefe; }
-.vnt-title .l2 { font-style: italic; color: #E67E22; }
-.vnt-subtitle {
+}}
+.vnt-title .l1 {{ color: var(--vnt-text); }}
+.vnt-title .l2 {{ font-style: italic; color: var(--vnt-accent); }}
+.vnt-subtitle {{
   margin: 0 0 48px; max-width: 640px;
   font-family: 'Spline Sans', sans-serif;
-  font-size: 19px; line-height: 1.55; color: #c2c3c8;
+  font-size: 19px; line-height: 1.55; color: var(--vnt-text-secondary);
   font-style: italic;
-}
+}}
+
+/* Theme toggle */
+.st-key-theme_toggle button {{
+  position: fixed; top: 72px; right: 24px; z-index: 1000;
+  width: 42px; height: 42px; padding: 0; border-radius: 50%;
+  background: var(--vnt-bg-elev) !important; border: 1px solid var(--vnt-border) !important;
+  color: var(--vnt-text) !important; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px var(--vnt-shadow);
+}}
+.st-key-theme_toggle button p {{ font-size: 18px; margin: 0; line-height: 1; }}
+.st-key-theme_toggle button:hover {{ border-color: var(--vnt-accent) !important; color: var(--vnt-accent) !important; }}
 
 /* Synthesis callout */
-.vnt-synth {
-  border-left: 3px solid #E67E22;
+.vnt-synth {{
+  border-left: 3px solid var(--vnt-accent);
   background: rgba(230,126,34,0.15);
   border-radius: 0 8px 8px 0;
   padding: 18px 22px; margin-bottom: 28px;
-}
-.vnt-synth-label {
+}}
+.vnt-synth-label {{
   font-family: 'Spline Sans', sans-serif;
   font-size: 12px; font-weight: 700; letter-spacing: 1px;
-  text-transform: uppercase; color: #f39c3e; margin-bottom: 8px;
-}
-.vnt-synth-text {
+  text-transform: uppercase; color: var(--vnt-accent-strong); margin-bottom: 8px;
+}}
+.vnt-synth-text {{
   font-family: 'Spline Sans', sans-serif;
-  font-size: 16.5px; line-height: 1.65; color: #fefefe; margin: 0;
-}
+  font-size: 16.5px; line-height: 1.65; color: var(--vnt-text); margin: 0;
+}}
 
 /* Section heading */
-.vnt-section-head {
+.vnt-section-head {{
   display: flex; justify-content: space-between; align-items: baseline;
   margin-bottom: 18px;
-}
-.vnt-section-title {
+}}
+.vnt-section-title {{
   font-family: 'Instrument Serif', Georgia, serif;
   font-style: italic; font-weight: 400; font-size: 30px;
-  color: #fefefe; margin: 0;
-}
-.vnt-section-count {
+  color: var(--vnt-text); margin: 0;
+}}
+.vnt-section-count {{
   font-family: 'Spline Sans', sans-serif;
-  font-size: 13px; color: #7a7b80;
-}
+  font-size: 13px; color: var(--vnt-text-muted);
+}}
 
 /* Category cards */
-.vnt-card {
-  background: #202023; border: 1px solid #3a3f44;
+.vnt-card {{
+  background: var(--vnt-card-bg); border: 1px solid var(--vnt-border);
   border-left-width: 3px; border-left-style: solid;
   border-radius: 0 10px 10px 0; padding: 18px 22px; margin-bottom: 14px;
-}
-.vnt-card-head {
+}}
+.vnt-card-head {{
   display: flex; align-items: center; gap: 10px; margin-bottom: 11px;
-}
-.vnt-card-dot {
+}}
+.vnt-card-dot {{
   width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
-}
-.vnt-card-title {
+}}
+.vnt-card-title {{
   font-family: 'Spline Sans', sans-serif;
-  font-size: 17px; font-weight: 700; color: #fefefe;
-}
-.vnt-card-pill {
+  font-size: 17px; font-weight: 700; color: var(--vnt-text);
+}}
+.vnt-card-pill {{
   margin-left: auto; padding: 3px 10px; border-radius: 20px;
   font-family: 'Spline Sans', sans-serif;
   font-size: 12px; font-weight: 600;
-}
-.vnt-card-items {
+}}
+.vnt-card-items {{
   margin: 0; padding-left: 0; list-style: none;
   display: flex; flex-direction: column; gap: 9px;
-}
-.vnt-card-items li {
+}}
+.vnt-card-items li {{
   font-family: 'Spline Sans', sans-serif;
-  font-size: 16px; line-height: 1.6; color: #c2c3c8;
+  font-size: 16px; line-height: 1.6; color: var(--vnt-text-secondary);
   padding-left: 16px; position: relative;
-}
+}}
 
 /* Tooltip */
-.vnt-tip { position: relative; display: inline-flex; align-items: center; cursor: help; }
-.vnt-tip-dot {
+.vnt-tip {{ position: relative; display: inline-flex; align-items: center; cursor: help; }}
+.vnt-tip-dot {{
   width: 16px; height: 16px; border-radius: 50%;
-  border: 1px solid #7a7b80; color: #7a7b80;
+  border: 1px solid var(--vnt-text-muted); color: var(--vnt-text-muted);
   font-size: 11px; font-weight: 700;
   display: inline-flex; align-items: center; justify-content: center;
-}
-.vnt-tipbox {
+}}
+.vnt-tipbox {{
   visibility: hidden; opacity: 0; transition: opacity .15s ease;
   position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%);
-  width: 240px; background: #2a2f33; border: 1px solid #3a3f44;
+  width: 240px; background: var(--vnt-bg-elev); border: 1px solid var(--vnt-border);
   border-radius: 8px; padding: 10px 12px;
   font-family: 'Spline Sans', sans-serif;
-  font-size: 12.5px; line-height: 1.5; color: #c2c3c8;
-  z-index: 5; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-}
-.vnt-tip:hover .vnt-tipbox { visibility: visible; opacity: 1; }
+  font-size: 12.5px; line-height: 1.5; color: var(--vnt-text-secondary);
+  z-index: 5; box-shadow: 0 8px 24px var(--vnt-shadow);
+}}
+.vnt-tip:hover .vnt-tipbox {{ visibility: visible; opacity: 1; }}
 
 /* Instruction block */
-.vnt-instr {
+.vnt-instr {{
   margin-top: 32px;
   border-left: 3px solid #10B981;
   background: rgba(16,185,129,0.08);
   border-radius: 0 10px 10px 0; padding: 20px 22px;
-}
-.vnt-instr-label {
+}}
+.vnt-instr-label {{
   font-family: 'Spline Sans', sans-serif;
   font-size: 12px; font-weight: 700; letter-spacing: 1px;
   text-transform: uppercase; color: #10B981; margin-bottom: 12px;
-}
-.vnt-instr-wrap { display: flex; flex-direction: column; gap: 10px; }
-.vnt-instr-pre {
-  margin: 0; background: #15191c; border: 1px solid #3a3f44;
+}}
+.vnt-instr-wrap {{ display: flex; flex-direction: column; gap: 10px; }}
+.vnt-instr-pre {{
+  margin: 0; background: var(--vnt-code-bg); border: 1px solid var(--vnt-border);
   border-radius: 8px; padding: 18px;
   font-family: 'Spline Sans', sans-serif;
-  font-size: 15px; line-height: 1.65; color: #c2c3c8;
+  font-size: 15px; line-height: 1.65; color: var(--vnt-text-secondary);
   white-space: pre-wrap; overflow-x: auto;
-}
-.vnt-copy-btn {
+}}
+.vnt-copy-btn {{
   align-self: flex-end;
-  background: #2a2f33; color: #c2c3c8;
-  border: 1px solid #3a3f44; border-radius: 6px;
+  background: var(--vnt-bg-elev); color: var(--vnt-text-secondary);
+  border: 1px solid var(--vnt-border); border-radius: 6px;
   padding: 8px 16px; font-size: 13px; font-weight: 600;
   cursor: pointer; font-family: 'Spline Sans', sans-serif;
   transition: border-color .15s ease, color .15s ease;
-}
-.vnt-copy-btn:hover { border-color: #10B981; color: #10B981; }
+}}
+.vnt-copy-btn:hover {{ border-color: #10B981; color: #10B981; }}
 
 /* Footer */
-.vnt-footer {
-  margin-top: 72px; padding: 28px 0 56px;
-  border-top: 1px solid #3a3f44;
+.vnt-footer {{
+  margin-top: 72px; padding: 28px 0 24px;
+  border-top: 1px solid var(--vnt-border);
   font-family: 'Spline Sans', sans-serif;
-  font-size: 13px; line-height: 1.7; color: #7a7b80; text-align: center;
-}
-.vnt-footer a { color: #E67E22; text-decoration: none; }
-.vnt-footer a:hover { text-decoration: underline; }
-.vnt-footer .name { color: #c2c3c8; }
+  font-size: 13px; line-height: 1.7; color: var(--vnt-text-muted); text-align: center;
+}}
+.vnt-footer a {{ color: var(--vnt-accent); text-decoration: none; }}
+.vnt-footer a:hover {{ text-decoration: underline; }}
+.vnt-footer .name {{ color: var(--vnt-text-secondary); }}
+
+/* Native Streamlit component overrides — keep them in sync with the toggle */
+.stApp {{ background-color: var(--vnt-bg) !important; }}
+[data-testid="stHeader"] {{ background-color: var(--vnt-bg) !important; }}
+[data-testid="stAppViewContainer"] {{ color: var(--vnt-text); }}
+[data-testid="stWidgetLabel"] p {{ color: var(--vnt-text) !important; font-family: 'Spline Sans', sans-serif; }}
+.stTextArea textarea {{
+  background-color: var(--vnt-card-bg) !important; color: var(--vnt-text) !important;
+  border-color: var(--vnt-border) !important;
+}}
+.stTextArea textarea::placeholder {{ color: var(--vnt-text-muted) !important; opacity: 1; }}
+[data-testid="stAlert"] {{
+  background-color: var(--vnt-bg-elev) !important; border: 1px solid var(--vnt-border) !important;
+}}
+[data-testid="stAlert"] p {{ color: var(--vnt-text) !important; }}
+.stDownloadButton button {{
+  background-color: var(--vnt-bg-elev) !important; color: var(--vnt-text) !important;
+  border: 1px solid var(--vnt-border) !important;
+}}
+.stDownloadButton button:hover {{ border-color: var(--vnt-accent) !important; color: var(--vnt-accent) !important; }}
+[data-testid="stExpander"] {{
+  border: 1px solid var(--vnt-border) !important; border-radius: 10px !important;
+  background: var(--vnt-card-bg) !important; margin-top: 8px;
+}}
+[data-testid="stExpander"] summary {{
+  font-family: 'Spline Sans', sans-serif; background-color: var(--vnt-card-bg) !important;
+  border-radius: 10px;
+}}
+[data-testid="stExpander"] summary p {{ color: var(--vnt-text-secondary) !important; font-size: 13px; }}
+[data-testid="stExpander"] summary svg {{ fill: var(--vnt-text-secondary) !important; }}
+[data-testid="stExpanderDetails"] p, [data-testid="stExpanderDetails"] li {{
+  color: var(--vnt-text-secondary) !important; font-family: 'Spline Sans', sans-serif; font-size: 14px; line-height: 1.6;
+}}
+[data-testid="stExpanderDetails"] strong {{ color: var(--vnt-text) !important; }}
+[data-testid="stExpanderDetails"] a {{ color: var(--vnt-accent) !important; }}
 </style>
 """, unsafe_allow_html=True)
+
+# ---------------------------------------------------------------------------
+# Theme toggle — sun / moon pictogram, fixed top-right
+# ---------------------------------------------------------------------------
+
+_toggle_icon = "🌙" if THEME == "dark" else "☀️"
+if st.button(_toggle_icon, key="theme_toggle", help="Basculer entre thème clair et sombre"):
+    st.session_state["theme"] = "light" if THEME == "dark" else "dark"
+    st.rerun()
 
 # ---------------------------------------------------------------------------
 # Header
@@ -506,3 +609,29 @@ st.markdown(
     '</div>',
     unsafe_allow_html=True,
 )
+
+with st.expander("Mentions légales & confidentialité"):
+    st.markdown(
+        f"""
+**Traitement des données**
+Le texte que vous collez (réponse à auditer, question de contexte) est transmis à l'API Albert
+(DINUM / Etalab, infrastructure d'IA souveraine française) le temps de l'analyse, puis n'est
+conservé ni par cette application ni dans une base de données : aucun stockage persistant côté
+serveur, seule la mémoire de session de votre navigateur garde le dernier résultat, et elle est
+effacée à la fermeture de l'onglet. L'application ne dépose aucun cookie de suivi et ne collecte
+aucune donnée personnelle.
+
+**Contenu généré par IA**
+La synthèse, les catégories de non-dits et l'instruction de correction affichées sont produites
+par un modèle de langage (actuellement `{LLM_MODEL}` via l'API Albert), conformément à
+l'obligation de transparence du règlement européen sur l'IA (AI Act, art. 50) : ce contenu est
+signalé comme généré artificiellement et reste une analyse automatisée, pas une vérité absolue.
+
+**Éditeur & contact**
+Bertrand Formet — [uneIAparjour.fr](https://uneiaparjour.fr) — [contact@uneiaparjour.fr](mailto:contact@uneiaparjour.fr)
+
+**Licence**
+Code source sous licence [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.fr) —
+[dépôt GitHub](https://github.com/uneIAparjour/non-ecrit)
+""".strip()
+    )

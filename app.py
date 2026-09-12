@@ -465,6 +465,8 @@ def _confirm_new_audit():
         if st.button("Effacer et continuer", type="primary", use_container_width=True):
             for key in ("audit_result", "audit_question", "audit_answer"):
                 st.session_state.pop(key, None)
+            st.session_state["question_input"] = ""
+            st.session_state["answer_input"] = ""
             st.rerun()
 
 
@@ -559,11 +561,13 @@ question = st.text_area(
     "Contexte / question posée — *optionnel*",
     placeholder="La question initiale ou le contexte dans lequel la réponse a été produite...",
     height=80,
+    key="question_input",
 )
 answer = st.text_area(
     "**Réponse à auditer**",
     placeholder="Collez ici la réponse du modèle à analyser...",
     height=220,
+    key="answer_input",
 )
 if st.button("Révéler le non-écrit →", type="primary", use_container_width=True):
     if not answer.strip():

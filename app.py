@@ -36,7 +36,7 @@ def _config(key: str, default: str = "") -> str:
 
 ALBERT_API_KEY = _config("ALBERT_API_KEY")
 ALBERT_BASE_URL = _config("ALBERT_BASE_URL", "https://albert.api.etalab.gouv.fr/v1")
-LLM_MODEL = _config("LLM_MODEL", "mistralai/Mistral-Small-3.2-24B-Instruct-2506")
+LLM_MODEL = _config("LLM_MODEL", "openai/gpt-oss-120b")
 
 if "theme" not in st.session_state:
     st.session_state["theme"] = "dark"

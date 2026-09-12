@@ -188,6 +188,11 @@ st.markdown(f"""
   font-size: 19px; line-height: 1.55; color: var(--vnt-text-secondary);
   font-style: italic;
 }}
+.vnt-ai-notice {{
+  margin: 0 0 32px;
+  font-family: 'Spline Sans', sans-serif;
+  font-size: 13px; color: var(--vnt-text-muted);
+}}
 
 /* Theme toggle — anchored to the content column, level with the title */
 [data-testid="stMainBlockContainer"] {{ position: relative; }}
@@ -385,8 +390,10 @@ st.markdown(
 )
 
 st.markdown(
-    '<p style="margin-bottom: 40px;">'
-    "Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) pour en révéler les non-dits.</p>",
+    '<p style="margin-bottom: 8px;">'
+    "Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) pour en révéler les non-dits.</p>"
+    '<p class="vnt-ai-notice">Analyse générée par un modèle d\'IA — pas une vérité absolue '
+    '(détails en pied de page).</p>',
     unsafe_allow_html=True,
 )
 

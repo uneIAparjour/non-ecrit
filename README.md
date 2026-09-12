@@ -21,6 +21,8 @@ L'outil s'appuie sur une taxonomie de l'implicite issue de l'ontologie Wikidata,
 
 Le détail de cette analyse est piloté par une seule instruction système, versionnée séparément dans [`INSTRUCTION.md`](INSTRUCTION.md).
 
+Interface et instruction disponibles en français et en anglais (picto globe dans l'app) — l'anglais n'est pas une traduction automatique de l'instruction française : [`INSTRUCTION_EN.md`](INSTRUCTION_EN.md) est rédigée nativement pour que l'audit reste aussi précis dans les deux langues.
+
 ## Utilisation
 
 Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) et, optionnellement, la question qui l'a produite. L'outil révèle les non-dits et produit :

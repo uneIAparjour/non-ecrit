@@ -14,8 +14,12 @@ import httpx
 import streamlit as st
 import streamlit.components.v1 as components
 
+if "lang" not in st.session_state:
+    st.session_state["lang"] = "fr"
+LANG = st.session_state["lang"]
+
 st.set_page_config(
-    page_title="Voyage au pays du non-écrit",
+    page_title="Voyage au pays du non-écrit" if LANG == "fr" else "The Unwritten Journey",
     page_icon="◇",
     layout="centered",
 )
@@ -74,7 +78,7 @@ PALETTES = {
 }
 PALETTE = PALETTES[THEME]
 
-CATEGORIES = [
+CATEGORIES_FR = [
     (
         "connotation", "Connotation",
         "Charges affectives et jugements de valeur portés par le choix des mots, "
@@ -112,12 +116,195 @@ CATEGORIES = [
     ),
 ]
 
-def _load_system_instruction() -> str:
-    content = (Path(__file__).parent / "INSTRUCTION.md").read_text(encoding="utf-8")
+CATEGORIES_EN = [
+    (
+        "connotation", "Connotation",
+        "Emotional charge and value judgments carried by word choice, "
+        "beyond their literal meaning.",
+        "#F59E0B",
+    ),
+    (
+        "subtext", "Subtext",
+        "Implicit message conveyed by tone, posture, or the way the point is framed.",
+        "#A855F7",
+    ),
+    (
+        "implicature", "Implicature",
+        "What the text lets you infer without stating it, through logical "
+        "or conversational implication.",
+        "#3B82F6",
+    ),
+    (
+        "defacto", "De facto",
+        "Claims presented as established facts, without source or nuance, "
+        "that deserve qualification.",
+        "#EF4444",
+    ),
+    (
+        "implementation", "Implementation detail",
+        "Material, technical, or organizational conditions that are "
+        "necessary but left unsaid.",
+        "#10B981",
+    ),
+    (
+        "omission", "Pure omission",
+        "Dimensions absent from the text even though they are central "
+        "to the topic.",
+        "#EC4899",
+    ),
+]
+
+CATEGORIES = CATEGORIES_FR if LANG == "fr" else CATEGORIES_EN
+
+
+def _load_system_instruction(lang: str) -> str:
+    filename = "INSTRUCTION.md" if lang == "fr" else "INSTRUCTION_EN.md"
+    content = (Path(__file__).parent / filename).read_text(encoding="utf-8")
     return content.split("\n---\n", 1)[1].strip()
 
 
-AUDIT_SYSTEM_INSTRUCTION = _load_system_instruction()
+AUDIT_SYSTEM_INSTRUCTION = _load_system_instruction(LANG)
+
+STRINGS = {
+    "fr": {
+        "title_l1": "Voyage au pays ",
+        "title_l2": "du non-écrit",
+        "subtitle": "Audit des implicites, sous-textes et angles morts des réponses proposées par un LLM.",
+        "intro": "Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) pour en révéler les non-dits.",
+        "ai_notice": "Analyse générée par un modèle d'IA, pas une vérité absolue (détails en pied de page).",
+        "question_label": "Contexte / question posée — *optionnel*",
+        "question_placeholder": "La question initiale ou le contexte dans lequel la réponse a été produite...",
+        "answer_label": "**Réponse à auditer**",
+        "answer_placeholder": "Collez ici la réponse du modèle à analyser...",
+        "submit_button": "Révéler le non-écrit →",
+        "warning_empty": "Veuillez coller la réponse à auditer.",
+        "warning_rate_limit": "Veuillez patienter {n} secondes entre deux analyses.",
+        "spinner": "Analyse des implicites en cours…",
+        "error_json": "Le modèle n'a pas renvoyé un JSON valide. Réessayez.",
+        "error_api": "Erreur de communication avec l'API Albert. Réessayez dans quelques instants.",
+        "error_generic": "Une erreur inattendue s'est produite. Réessayez.",
+        "error_analysis": "Erreur d'analyse : {e}",
+        "synthesis_label": "Synthèse de l'audit",
+        "section_title": "Le non-écrit révélé",
+        "section_count": "6 catégories · {n} non-dits",
+        "instr_label": "Instruction à renvoyer au modèle d'origine",
+        "copy_button": "Copier",
+        "copy_confirm": "Copié ✓",
+        "export_button": "↓ Exporter l'audit (Markdown)",
+        "export_filename": "audit-implicites.md",
+        "new_audit_button": "↺ Nouvel audit",
+        "dialog_title": "Nouvel audit",
+        "dialog_warning": "⚠️ Attention, l'audit actuel sera effacé. Continuer ?",
+        "dialog_cancel": "Annuler",
+        "dialog_confirm": "Effacer et continuer",
+        "toggle_theme_help": "Basculer entre thème clair et sombre",
+        "toggle_lang_help": "Switch to English",
+        "footer_inspired": 'Inspiré par <a href="https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe" target="_blank">Voyage au pays du non-écrit</a> d\'<span class="name">Arthur Sarazin</span>',
+        "footer_model": 'Modèle <span class="name">{model}</span> via l\'<a href="https://albert.api.etalab.gouv.fr" target="_blank">API Albert</a> · hébergé sur <a href="https://render.com" target="_blank">Render</a> (<span class="name">Francfort, UE</span>)',
+        "footer_dev": 'Développé avec Claude Code · <a href="https://github.com/uneIAparjour/non-ecrit" target="_blank">dépôt GitHub</a>',
+        "footer_license": 'CC BY 4.0 — <span class="name">Bertrand Formet</span> pour <a href="https://uneIAparjour.fr" target="_blank">uneIAparjour.fr</a>',
+        "expander_title": "Confidentialité",
+        "privacy_md": """
+**Traitement des données**
+Le texte que vous collez (réponse à auditer, question de contexte) est transmis à l'API Albert
+(DINUM / Etalab, infrastructure d'IA souveraine française) le temps de l'analyse, puis n'est
+conservé ni par cette application ni dans une base de données : aucun stockage persistant côté
+serveur, seule la mémoire de session de votre navigateur garde le dernier résultat, et elle est
+effacée à la fermeture de l'onglet. L'application ne dépose aucun cookie de suivi et ne collecte
+aucune donnée personnelle.
+
+**Contenu généré par IA**
+La synthèse, les catégories de non-dits et l'instruction de correction affichées sont produites
+par le modèle de langage indiqué ci-dessus via l'API Albert, conformément à l'obligation de
+transparence du règlement européen sur l'IA (AI Act, art. 50) : ce contenu est signalé comme
+généré artificiellement et reste une analyse automatisée, pas une vérité absolue.
+
+**Contact**
+Une question sur le traitement de vos données ? [contact@uneiaparjour.fr](mailto:contact@uneiaparjour.fr)
+""".strip(),
+        "export_title": "# Audit de l'implicite — Résultats\n",
+        "export_question": "## Question analysée\n{q}\n",
+        "export_answer": "## Réponse auditée\n{a}\n",
+        "export_synthesis": "## Synthèse\n{s}\n",
+        "export_nothing": "_Rien de notable._",
+        "export_correction_title": "## Instruction de correction\n",
+        "export_correction_intro": "Copiez-collez cette consigne dans votre conversation avec le modèle d'origine :\n",
+        "export_credit": (
+            "---\n_Généré par [Voyage au pays du non-écrit](https://github.com/uneIAparjour/non-ecrit) "
+            "— CC BY 4.0 Bertrand Formet pour [uneIAparjour](https://uneIAparjour.fr)_"
+        ),
+        "api_key_missing": "Clé API Albert non configurée dans les secrets Streamlit.",
+    },
+    "en": {
+        "title_l1": "The Unwritten ",
+        "title_l2": "Journey",
+        "subtitle": "Auditing the implicit, the subtext, and the blind spots in LLM responses.",
+        "intro": "Paste a response produced by a language model (ChatGPT, Claude, Gemini, Mistral…) to reveal what it leaves unsaid.",
+        "ai_notice": "Analysis generated by an AI model, not an absolute truth (details in the footer).",
+        "question_label": "Context / question asked — *optional*",
+        "question_placeholder": "The original question or context in which the response was produced...",
+        "answer_label": "**Response to audit**",
+        "answer_placeholder": "Paste the model's response to analyze here...",
+        "submit_button": "Reveal the unwritten →",
+        "warning_empty": "Please paste the response to audit.",
+        "warning_rate_limit": "Please wait {n} seconds between two analyses.",
+        "spinner": "Analyzing implicit content…",
+        "error_json": "The model did not return valid JSON. Please try again.",
+        "error_api": "Error communicating with the Albert API. Please try again shortly.",
+        "error_generic": "An unexpected error occurred. Please try again.",
+        "error_analysis": "Analysis error: {e}",
+        "synthesis_label": "Audit synthesis",
+        "section_title": "The unwritten, revealed",
+        "section_count": "6 categories · {n} unstated elements",
+        "instr_label": "Instruction to send back to the original model",
+        "copy_button": "Copy",
+        "copy_confirm": "Copied ✓",
+        "export_button": "↓ Export audit (Markdown)",
+        "export_filename": "implicit-audit.md",
+        "new_audit_button": "↺ New audit",
+        "dialog_title": "New audit",
+        "dialog_warning": "⚠️ Warning, the current audit will be erased. Continue?",
+        "dialog_cancel": "Cancel",
+        "dialog_confirm": "Clear and continue",
+        "toggle_theme_help": "Toggle light / dark theme",
+        "toggle_lang_help": "Passer en français",
+        "footer_inspired": 'Inspired by <a href="https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe" target="_blank">Voyage au pays du non-écrit</a> by <span class="name">Arthur Sarazin</span>',
+        "footer_model": 'Model <span class="name">{model}</span> via the <a href="https://albert.api.etalab.gouv.fr" target="_blank">Albert API</a> · hosted on <a href="https://render.com" target="_blank">Render</a> (<span class="name">Frankfurt, EU</span>)',
+        "footer_dev": 'Built with Claude Code · <a href="https://github.com/uneIAparjour/non-ecrit" target="_blank">GitHub repo</a>',
+        "footer_license": 'CC BY 4.0 — <span class="name">Bertrand Formet</span> for <a href="https://uneIAparjour.fr" target="_blank">uneIAparjour.fr</a>',
+        "expander_title": "Privacy",
+        "privacy_md": """
+**Data processing**
+The text you paste (response to audit, context question) is sent to the Albert API
+(DINUM / Etalab, French sovereign AI infrastructure) for the duration of the analysis, then is
+kept neither by this application nor in any database: no persistent server-side storage, only
+your browser's session memory holds the last result, and it is cleared when the tab is closed.
+The application does not set any tracking cookies and does not collect any personal data.
+
+**AI-generated content**
+The synthesis, the categories of unstated content, and the correction instruction shown are
+produced by the language model indicated above via the Albert API, in line with the transparency
+obligation of the EU AI Act (art. 50): this content is flagged as artificially generated and
+remains an automated analysis, not an absolute truth.
+
+**Contact**
+A question about how your data is handled? [contact@uneiaparjour.fr](mailto:contact@uneiaparjour.fr)
+""".strip(),
+        "export_title": "# Implicit Audit — Results\n",
+        "export_question": "## Question analyzed\n{q}\n",
+        "export_answer": "## Response audited\n{a}\n",
+        "export_synthesis": "## Synthesis\n{s}\n",
+        "export_nothing": "_Nothing notable._",
+        "export_correction_title": "## Correction instruction\n",
+        "export_correction_intro": "Copy and paste this instruction into your conversation with the original model:\n",
+        "export_credit": (
+            "---\n_Generated by [Voyage au pays du non-écrit](https://github.com/uneIAparjour/non-ecrit) "
+            "— CC BY 4.0 Bertrand Formet for [uneIAparjour](https://uneIAparjour.fr)_"
+        ),
+        "api_key_missing": "Albert API key not configured in Streamlit secrets.",
+    },
+}
+S = STRINGS[LANG]
 
 # ---------------------------------------------------------------------------
 # Style — hifi from Claude Design handoff
@@ -165,16 +352,17 @@ st.markdown(f"""
 [data-testid="stHeader"] {{ display: none !important; }}
 [data-testid="stMainBlockContainer"] {{ padding-top: 24px !important; }}
 
-/* Theme toggle — anchored to the content column, level with the title */
+/* Theme + language toggles — anchored to the content column, level with the title */
 [data-testid="stMainBlockContainer"] {{ position: relative; }}
 .st-key-theme_toggle {{ position: absolute; top: 34px; right: 0; z-index: 10; }}
-.st-key-theme_toggle button {{
+.st-key-lang_toggle {{ position: absolute; top: 34px; right: 40px; z-index: 10; }}
+.st-key-theme_toggle button, .st-key-lang_toggle button {{
   width: auto; height: auto; padding: 4px; min-height: 0;
   background: transparent !important; border: none !important; box-shadow: none !important;
   color: var(--vnt-text-muted) !important; display: flex; align-items: center; justify-content: center;
   opacity: 0.75; transition: color .15s ease, opacity .15s ease;
 }}
-.st-key-theme_toggle button:hover {{ color: var(--vnt-accent) !important; opacity: 1; }}
+.st-key-theme_toggle button:hover, .st-key-lang_toggle button:hover {{ color: var(--vnt-accent) !important; opacity: 1; }}
 
 /* Synthesis callout */
 .vnt-synth {{
@@ -337,12 +525,16 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# Theme toggle — sun / moon pictogram, fixed top-right
+# Theme + language toggles
 # ---------------------------------------------------------------------------
 
 _toggle_icon = ":material/dark_mode:" if THEME == "dark" else ":material/light_mode:"
-if st.button("", key="theme_toggle", help="Basculer entre thème clair et sombre", icon=_toggle_icon):
+if st.button("", key="theme_toggle", help=S["toggle_theme_help"], icon=_toggle_icon):
     st.session_state["theme"] = "light" if THEME == "dark" else "dark"
+    st.rerun()
+
+if st.button("", key="lang_toggle", help=S["toggle_lang_help"], icon=":material/language:"):
+    st.session_state["lang"] = "en" if LANG == "fr" else "fr"
     st.rerun()
 
 # ---------------------------------------------------------------------------
@@ -350,21 +542,18 @@ if st.button("", key="theme_toggle", help="Basculer entre thème clair et sombre
 # ---------------------------------------------------------------------------
 
 st.markdown(
-    '<h1 class="vnt-title"><span class="l1">Voyage au pays </span>'
-    '<span class="l2">du non-écrit</span></h1>',
+    f'<h1 class="vnt-title"><span class="l1">{S["title_l1"]}</span>'
+    f'<span class="l2">{S["title_l2"]}</span></h1>',
     unsafe_allow_html=True,
 )
 st.markdown(
-    '<p class="vnt-subtitle">Audit des implicites, sous-textes et angles morts '
-    'des réponses proposées par un LLM.</p>',
+    f'<p class="vnt-subtitle">{S["subtitle"]}</p>',
     unsafe_allow_html=True,
 )
 
 st.markdown(
-    '<p style="margin-bottom: 8px;">'
-    "Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) pour en révéler les non-dits.</p>"
-    '<p class="vnt-ai-notice">Analyse générée par un modèle d\'IA, pas une vérité absolue '
-    '(détails en pied de page).</p>',
+    f'<p style="margin-bottom: 8px;">{S["intro"]}</p>'
+    f'<p class="vnt-ai-notice">{S["ai_notice"]}</p>',
     unsafe_allow_html=True,
 )
 
@@ -374,7 +563,7 @@ st.markdown(
 
 def call_albert(messages: list[dict]) -> str:
     if not ALBERT_API_KEY:
-        st.error("Clé API Albert non configurée dans les secrets Streamlit.")
+        st.error(S["api_key_missing"])
         st.stop()
     resp = httpx.post(
         f"{ALBERT_BASE_URL}/chat/completions",
@@ -390,10 +579,11 @@ EXPECTED_KEYS = {"connotation", "subtext", "implicature", "defacto", "implementa
 
 
 def run_audit(question: str, answer: str) -> dict:
+    a_label = "RÉPONSE DU LLM" if LANG == "fr" else "LLM RESPONSE"
     user_content = (
-        f"QUESTION : {question}\n\nRÉPONSE DU LLM :\n{answer}"
+        f"QUESTION : {question}\n\n{a_label} :\n{answer}"
         if question
-        else f"RÉPONSE DU LLM :\n{answer}"
+        else f"{a_label} :\n{answer}"
     )
     messages = [
         {"role": "system", "content": AUDIT_SYSTEM_INSTRUCTION},
@@ -407,9 +597,7 @@ def run_audit(question: str, answer: str) -> dict:
     try:
         data = json.loads(json_str.strip())
     except json.JSONDecodeError:
-        raise ValueError(
-            "Le modèle n'a pas renvoyé un JSON valide. Réessayez."
-        )
+        raise ValueError(S["error_json"])
     for key in EXPECTED_KEYS:
         if key not in data:
             data[key] = []
@@ -421,13 +609,13 @@ def run_audit(question: str, answer: str) -> dict:
 
 
 def format_export(audit: dict, question: str, answer: str) -> str:
-    lines = ["# Audit de l'implicite — Résultats\n"]
+    lines = [S["export_title"]]
     if question:
-        lines.append(f"## Question analysée\n{question}\n")
-    lines.append(f"## Réponse auditée\n{answer}\n")
+        lines.append(S["export_question"].format(q=question))
+    lines.append(S["export_answer"].format(a=answer))
     lines.append("---\n")
     if audit.get("synthesis"):
-        lines.append(f"## Synthèse\n{audit['synthesis']}\n")
+        lines.append(S["export_synthesis"].format(s=audit["synthesis"]))
     for cat_id, label, tip, _ in CATEGORIES:
         items = audit.get(cat_id, [])
         lines.append(f"### {label}")
@@ -435,17 +623,14 @@ def format_export(audit: dict, question: str, answer: str) -> str:
             for item in items:
                 lines.append(f"- {item}")
         else:
-            lines.append("_Rien de notable._")
+            lines.append(S["export_nothing"])
         lines.append("")
     if audit.get("correction_prompt"):
         lines.append("---\n")
-        lines.append("## Instruction de correction\n")
-        lines.append("Copiez-collez cette consigne dans votre conversation avec le modèle d'origine :\n")
+        lines.append(S["export_correction_title"])
+        lines.append(S["export_correction_intro"])
         lines.append(f"> {audit['correction_prompt']}\n")
-    lines.append(
-        "---\n_Généré par [Voyage au pays du non-écrit](https://github.com/uneIAparjour/non-ecrit) "
-        "— CC BY 4.0 Bertrand Formet pour [uneIAparjour](https://uneIAparjour.fr)_"
-    )
+    lines.append(S["export_credit"])
     return "\n".join(lines)
 
 
@@ -459,15 +644,15 @@ def _esc(text: str) -> str:
     return html.escape(str(text))
 
 
-@st.dialog("Nouvel audit")
+@st.dialog(S["dialog_title"])
 def _confirm_new_audit():
-    st.write("⚠️ Attention, l'audit actuel sera effacé. Continuer ?")
+    st.write(S["dialog_warning"])
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Annuler", use_container_width=True):
+        if st.button(S["dialog_cancel"], use_container_width=True):
             st.rerun()
     with col2:
-        if st.button("Effacer et continuer", type="primary", use_container_width=True):
+        if st.button(S["dialog_confirm"], type="primary", use_container_width=True):
             for key in ("audit_result", "audit_question", "audit_answer"):
                 st.session_state.pop(key, None)
             st.session_state["question_input"] = ""
@@ -480,7 +665,7 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
     if audit.get("synthesis"):
         st.markdown(
             '<div class="vnt-synth">'
-            '<div class="vnt-synth-label">Synthèse de l\'audit</div>'
+            f'<div class="vnt-synth-label">{S["synthesis_label"]}</div>'
             f'<p class="vnt-synth-text">{_esc(audit["synthesis"])}</p>'
             '</div>',
             unsafe_allow_html=True,
@@ -490,8 +675,8 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
     total = sum(len(audit.get(c[0], [])) for c in CATEGORIES)
     st.markdown(
         '<div class="vnt-section-head">'
-        '<h2 class="vnt-section-title">Le non-écrit révélé</h2>'
-        f'<span class="vnt-section-count">6 catégories · {total} non-dits</span>'
+        f'<h2 class="vnt-section-title">{S["section_title"]}</h2>'
+        f'<span class="vnt-section-count">{S["section_count"].format(n=total)}</span>'
         '</div>',
         unsafe_allow_html=True,
     )
@@ -529,15 +714,15 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
         safe_prompt = _esc(audit["correction_prompt"])
         st.markdown(
             '<div class="vnt-instr">'
-            '<div class="vnt-instr-label">Instruction à renvoyer au modèle d\'origine</div>'
+            f'<div class="vnt-instr-label">{S["instr_label"]}</div>'
             '<div class="vnt-instr-wrap">'
             f'<pre class="vnt-instr-pre" id="vnt-instruction">{safe_prompt}</pre>'
             '<button class="vnt-copy-btn" onclick="'
             "var t=document.getElementById('vnt-instruction').textContent;"
             "navigator.clipboard.writeText(t).then(function(){"
-            "var b=event.target;b.textContent='Copié ✓';"
-            "setTimeout(function(){b.textContent='Copier'},1800)});"
-            '">Copier</button>'
+            f"var b=event.target;b.textContent='{S['copy_confirm']}';"
+            f"setTimeout(function(){{b.textContent='{S['copy_button']}'}},1800)}});"
+            f'">{S["copy_button"]}</button>'
             '</div>'
             '</div>',
             unsafe_allow_html=True,
@@ -546,14 +731,14 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
     # Export
     export_md = format_export(audit, question, answer)
     st.download_button(
-        label="↓ Exporter l'audit (Markdown)",
+        label=S["export_button"],
         data=export_md,
-        file_name="audit-implicites.md",
+        file_name=S["export_filename"],
         mime="text/markdown",
         use_container_width=True,
     )
 
-    if st.button("↺ Nouvel audit", use_container_width=True, key="new_audit_btn"):
+    if st.button(S["new_audit_button"], use_container_width=True, key="new_audit_btn"):
         _confirm_new_audit()
 
 # ---------------------------------------------------------------------------
@@ -563,26 +748,26 @@ def render_results(audit: dict, question: str = "", answer: str = ""):
 RATE_LIMIT_SECONDS = 15
 
 question = st.text_area(
-    "Contexte / question posée — *optionnel*",
-    placeholder="La question initiale ou le contexte dans lequel la réponse a été produite...",
+    S["question_label"],
+    placeholder=S["question_placeholder"],
     height=80,
     key="question_input",
 )
 answer = st.text_area(
-    "**Réponse à auditer**",
-    placeholder="Collez ici la réponse du modèle à analyser...",
+    S["answer_label"],
+    placeholder=S["answer_placeholder"],
     height=220,
     key="answer_input",
 )
-if st.button("Révéler le non-écrit →", type="primary", use_container_width=True):
+if st.button(S["submit_button"], type="primary", use_container_width=True):
     if not answer.strip():
-        st.warning("Veuillez coller la réponse à auditer.")
+        st.warning(S["warning_empty"])
     else:
         last_call = st.session_state.get("last_call_time", 0)
         if time.time() - last_call < RATE_LIMIT_SECONDS:
-            st.warning(f"Veuillez patienter {RATE_LIMIT_SECONDS} secondes entre deux analyses.")
+            st.warning(S["warning_rate_limit"].format(n=RATE_LIMIT_SECONDS))
         else:
-            with st.spinner("Analyse des implicites en cours…"):
+            with st.spinner(S["spinner"]):
                 try:
                     q = question.strip()
                     a = answer.strip()
@@ -592,11 +777,11 @@ if st.button("Révéler le non-écrit →", type="primary", use_container_width=
                     st.session_state["audit_question"] = q
                     st.session_state["audit_answer"] = a
                 except (ValueError, json.JSONDecodeError) as e:
-                    st.error(f"Erreur d'analyse : {e}")
+                    st.error(S["error_analysis"].format(e=e))
                 except httpx.HTTPStatusError:
-                    st.error("Erreur de communication avec l'API Albert. Réessayez dans quelques instants.")
+                    st.error(S["error_api"])
                 except Exception:
-                    st.error("Une erreur inattendue s'est produite. Réessayez.")
+                    st.error(S["error_generic"])
 
 if st.session_state.get("audit_result"):
     render_results(
@@ -611,39 +796,16 @@ if st.session_state.get("audit_result"):
 
 st.markdown(
     '<div class="vnt-footer">'
-    '<div>Inspiré par <a href="https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe" '
-    'target="_blank">Voyage au pays du non-écrit</a> d\'<span class="name">Arthur Sarazin</span></div>'
-    f'<div>Modèle <span class="name">{LLM_MODEL}</span> via l\'<a href="https://albert.api.etalab.gouv.fr" '
-    'target="_blank">API Albert</a> · hébergé sur <a href="https://render.com" target="_blank">Render</a> '
-    '(<span class="name">Francfort, UE</span>)</div>'
-    '<div>Développé avec Claude Code · <a href="https://github.com/uneIAparjour/non-ecrit" target="_blank">dépôt GitHub</a></div>'
-    '<div style="margin-top:8px;">CC BY 4.0 — <span class="name">Bertrand Formet</span> pour '
-    '<a href="https://uneIAparjour.fr" target="_blank">uneIAparjour.fr</a></div>'
+    f'<div>{S["footer_inspired"]}</div>'
+    f'<div>{S["footer_model"].format(model=LLM_MODEL)}</div>'
+    f'<div>{S["footer_dev"]}</div>'
+    f'<div style="margin-top:8px;">{S["footer_license"]}</div>'
     '</div>',
     unsafe_allow_html=True,
 )
 
-with st.expander("Confidentialité"):
-    st.markdown(
-        f"""
-**Traitement des données**
-Le texte que vous collez (réponse à auditer, question de contexte) est transmis à l'API Albert
-(DINUM / Etalab, infrastructure d'IA souveraine française) le temps de l'analyse, puis n'est
-conservé ni par cette application ni dans une base de données : aucun stockage persistant côté
-serveur, seule la mémoire de session de votre navigateur garde le dernier résultat, et elle est
-effacée à la fermeture de l'onglet. L'application ne dépose aucun cookie de suivi et ne collecte
-aucune donnée personnelle.
-
-**Contenu généré par IA**
-La synthèse, les catégories de non-dits et l'instruction de correction affichées sont produites
-par le modèle de langage indiqué ci-dessus via l'API Albert, conformément à l'obligation de
-transparence du règlement européen sur l'IA (AI Act, art. 50) : ce contenu est signalé comme
-généré artificiellement et reste une analyse automatisée, pas une vérité absolue.
-
-**Contact**
-Une question sur le traitement de vos données ? [contact@uneiaparjour.fr](mailto:contact@uneiaparjour.fr)
-""".strip()
-    )
+with st.expander(S["expander_title"]):
+    st.markdown(S["privacy_md"])
 
 # ---------------------------------------------------------------------------
 # Auto-resize when embedded in an iframe (posts our real height to the

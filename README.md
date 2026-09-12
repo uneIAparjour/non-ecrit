@@ -19,6 +19,8 @@ L'outil s'appuie sur une taxonomie de l'implicite issue de l'ontologie Wikidata,
 | **Détail d'implémentation** | Conditions matérielles ou organisationnelles passées sous silence |
 | **Omission pure** | Dimensions absentes du texte alors qu'elles sont structurantes pour le sujet |
 
+Le détail de cette analyse est piloté par une seule instruction système, versionnée séparément dans [`INSTRUCTION.md`](INSTRUCTION.md).
+
 ## Utilisation
 
 Collez une réponse produite par un modèle de langage (ChatGPT, Claude, Gemini, Mistral…) et, optionnellement, la question qui l'a produite. L'outil révèle les non-dits et produit :

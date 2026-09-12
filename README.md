@@ -54,18 +54,6 @@ Sans Blueprint, un service web Python classique fonctionne aussi : même build/s
 
 Limites du plan gratuit Render à connaître : le service se met en veille après 15 min sans trafic (le réveil prend ~1 min à la requête suivante), et le workspace dispose de 750h d'instance gratuite par mois — largement suffisant pour un usage occasionnel comme celui-ci.
 
-### Sur Streamlit Cloud (alternatif)
-
-1. Connecter le repo GitHub sur [streamlit.io/cloud](https://streamlit.io/cloud)
-2. Pointer sur `app.py`
-3. Dans **Settings → Secrets**, ajouter :
-
-```toml
-ALBERT_API_KEY = "votre-clé"
-```
-
-Streamlit Cloud n'offre pas de choix de région UE explicite — à privilégier pour un déploiement rapide, Render pour la garantie d'hébergement européen.
-
 ## Crédits
 
 - Taxonomie de l'implicite : [Arthur Sarazin](https://www.linkedin.com/pulse/voyage-au-pays-du-non-%C3%A9crit-arthur-sarazin-phd-hwswe)
